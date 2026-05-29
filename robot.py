@@ -83,7 +83,11 @@ def log_successful_upload(filename):
 def get_viral_text_metadata(filename, fallback_title):
     print("🧠 [AI INSTANT GENERATION] Crafting custom viral title & caption from theme...")
     try:
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        # ☁️ Force look at the exact Cloud Environment Variable first, fallback to Local constant
+        actual_key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY)
+        
+        # Initialize the official Google GenAI Client
+        client = genai.Client(api_key=actual_key)
         random_seed = random.randint(1000, 9999)
 
         prompt = (
@@ -103,6 +107,7 @@ def get_viral_text_metadata(filename, fallback_title):
             "}"
         )
         
+        # Call the updated official model
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
@@ -123,7 +128,8 @@ def get_viral_text_metadata(filename, fallback_title):
         return data.get("title", fallback_title), data.get("caption", "Check this out! #Shorts")
         
     except Exception as e:
-        print(f"❌ Instant AI Generation failed: {e}")
+        # 🚨 This prints the EXACT reason why Gemini failed so we can see it in the log!
+        print(f"❌ Instant AI Generation failed internal crash log: {e}")
         return f"{fallback_title}", "Check out this amazing short! 👇\n\n#Shorts #Viral #Trending"
 
 # ==========================================
