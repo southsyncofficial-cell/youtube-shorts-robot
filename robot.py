@@ -30,27 +30,41 @@ FOLDER_IDS = [
 HISTORY_FILE = "upload_history.txt"            # The ledger file tracking what we uploaded
 LOCAL_VIDEO_NAME = "temp_short.mp4"             # Temporary file name on your PC
 
-# 🔑 PASTE YOUR GEMINI API KEY INSIDE THE QUOTES BELOW!
-GEMINI_API_KEY = "AIzaSyB7eTErbnSQiabChmS05RhAyWBy5Y6Jg0I"
-
 SCOPES = [
     'https://www.googleapis.com/auth/drive.readonly',
     'https://www.googleapis.com/auth/youtube.upload'
 ]
 
+# 🔑 COMBINED CLOUD & LOCAL SAFETYS: Keep your real key as the local fallback!
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB7eTErbnSQiabChmS05RhAyWBy5Y6Jg0I")
+
 def get_google_services():
     creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-            
+    
+    # ☁️ Cloud Environment Check: Pull keys from GitHub Vault if running in the cloud
+    if os.getenv("RUNNING_IN_CLOUD") == "true":
+        print("☁️ Running in GitHub Cloud. Extracting tokens from secure vault...")
+        creds_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
+        token_json = json.loads(os.getenv("GOOGLE_TOKEN"))
+        
+        creds = Credentials.from_authorized_user_info(token_json, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+    else:
+        # 💻 Local Environment Check: Use your local files if running on your PC
+        print("💻 Running locally on PC. Reading token.json...")
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
+                
     return build('drive', 'v3', credentials=creds), build('youtube', 'v3', credentials=creds)
 
 def get_uploaded_history():
@@ -97,13 +111,10 @@ def get_viral_text_metadata(filename, fallback_title):
         
         raw_text = response.text.strip()
         
-        # 🛠️ PASTE-SAFE CLEANING LOGIC (No complex regex strings!)
         if raw_text.startswith("```"):
             lines = raw_text.splitlines()
-            # Remove the starting markdown line (e.g., ```json)
             if lines[0].startswith("```"):
                 lines.pop(0)
-            # Remove the ending markdown line (e.g., ```)
             if lines and lines[-1].strip() == "```":
                 lines.pop(-1)
             raw_text = "\n".join(lines).strip()
