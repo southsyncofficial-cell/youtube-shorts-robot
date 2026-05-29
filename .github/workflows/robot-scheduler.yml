@@ -2,10 +2,10 @@ name: YouTube Shorts Robot 24/7
 
 on:
   schedule:
-    - cron: '0 0,6,12,18 * * *'
+    # ⏰ Automated Drop: Fires exactly at 11:11 AM IST (5:41 AM UTC) daily
+    - cron: '41 5 * * *'
   workflow_dispatch:
 
-# ⚡ Opt-in globally to GitHub's updated Node.js 24 runtime environment
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
