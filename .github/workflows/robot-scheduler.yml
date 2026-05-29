@@ -5,6 +5,10 @@ on:
     - cron: '0 0,6,12,18 * * *'
   workflow_dispatch:
 
+# ⚡ Opt-in globally to GitHub's updated Node.js 24 runtime environment
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   run-robot:
     runs-on: ubuntu-latest
