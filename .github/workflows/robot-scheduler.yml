@@ -27,8 +27,8 @@ jobs:
       env:
         RUNNING_IN_CLOUD: "true"
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS }}
-        GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN }}
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
       run: python robot.py
 
     - name: Save Upload Ledger History back to GitHub
