@@ -240,5 +240,37 @@ def run_automation_cycle():
     
     print("🏁 Cycle completed successfully!\n")
 
+# ==========================================
+# 🛑 HIGH-PRECISION TWIN-WAVE TIME GATE
+# ==========================================
+def run_time_gate():
+    # 🌍 Calculate true India Standard Time (UTC + 5:30)
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
+    
+    current_hour = ist_now.hour
+    current_minute = ist_now.minute
+    
+    print(f"⏰ High-Precision Clock: Current Indian Time is {ist_now.strftime('%I:%M %p')} ({current_hour}:{current_minute:02d})")
+    
+    # 🎯 WAVE 1: Morning drop window (11:00 AM to 11:29 AM IST)
+    is_morning_wave = (current_hour == 11) and (0 <= current_minute <= 29)
+    
+    # 🎯 WAVE 2: Evening drop window (8:00 PM to 8:29 PM IST / 20:00 to 20:29)
+    is_evening_wave = (current_hour == 20) and (0 <= current_minute <= 29)
+    
+    if is_morning_wave or is_evening_wave:
+        print("🚀 [TARGET HIT] Inside an active posting wave! Proceeding to upload video...")
+        return True
+    else:
+        print("💤 Not a scheduled upload hour. Exiting safely to wait for the next check-in loop.")
+        return False
+
+
 if __name__ == '__main__':
+    # 🛑 Stop execution early if GitHub boots the computer outside your target wave hours
+    if not run_time_gate():
+        sys.exit(0)
+        
+    # 🎬 Run your untouched core pipeline if the time gate is unlocked!
     run_automation_cycle()
