@@ -38,7 +38,7 @@ SCOPES = [
 ]
 
 # 🔑 COMBINED CLOUD & LOCAL SAFETYS: Keep your real key as the local fallback!
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB7eTErbnSQiabChmS05RhAyWBy5Y6Jg0I")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 def get_google_services():
     creds = None
