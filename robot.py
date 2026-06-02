@@ -271,8 +271,8 @@ def run_time_gate():
 
 if __name__ == '__main__':
     # 🛑 Stop execution early if GitHub boots the computer outside your target wave hours
-     if not run_time_gate():
-        sys.exit(0)
+    if not run_time_gate():
+        sys.exit()
         
     # 🎬 Run your untouched core pipeline if the time gate is unlocked!
     run_automation_cycle()
