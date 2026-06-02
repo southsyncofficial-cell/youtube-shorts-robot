@@ -4,6 +4,8 @@ import re
 import time
 import json
 import random
+import datetime  # 👈 Added back to fix the NameError
+import sys       # 👈 Added back to fix the NameError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
