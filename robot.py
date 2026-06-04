@@ -247,20 +247,25 @@ def run_automation_cycle():
 # ==========================================
 
 def run_time_gate():
-    # 🌍 Calculate true India Standard Time (UTC + 5:30)
+    # 🛠️ Check if a human manually clicked the "Run workflow" button
+    github_event = os.getenv("GITHUB_EVENT_NAME", "")
+    if github_event == "workflow_dispatch":
+        print("👤 Manual trigger detected! Bypassing the time gate for manual test...")
+        return True
+
+    # 🌍 Otherwise, run normal background clock checks for automation
     utc_now = datetime.datetime.now(datetime.timezone.utc)
     ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
-    
     current_hour = ist_now.hour
     
     print(f"⏰ High-Precision Clock: Current Indian Time is {ist_now.strftime('%I:%M %p')} ({ist_now.strftime('%H:%M')})")
     
-    # 🟢 WINDOW 1: Morning Wave (Temporarily set to 10 AM so your test works right now!)
-    if current_hour == 10 or current_hour == 11:
+    # 🟢 WINDOW 1: Morning Auto Drop
+    if current_hour == 11:
         print("🔓 Morning gate open! Proceeding to upload.")
         return True
         
-    # 🟢 WINDOW 2: Evening Wave (Accepts any time from 08:00 PM to 08:59 PM)
+    # 🟢 WINDOW 2: Evening Auto Drop (8:20 PM IST)
     if current_hour == 20:
         print("🔓 Evening gate open! Proceeding to upload.")
         return True
