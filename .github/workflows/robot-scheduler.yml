@@ -2,8 +2,12 @@ name: YouTube Shorts Robot 24/7
 
 on:
   schedule:
-    # 🔄 Triggers a brief check-in every 15 minutes, 24/7
-    - cron: '*/15 * * * *'
+    # 11:15 AM IST (5:45 AM UTC) -> Falls perfectly in your Morning Window
+    - cron: '45 5 * * *'
+    
+    # 8:20 PM IST (2:50 PM UTC) -> Falls perfectly in your Evening Window
+    - cron: '50 14 * * *'
+    
   workflow_dispatch:
   
 # The rest of your file (env:, jobs:, etc.) stays exactly the same!
