@@ -2,11 +2,13 @@ name: YouTube Shorts Robot 24/7
 
 on:
   schedule:
-    # 11:15 AM IST (5:45 AM UTC) -> Falls perfectly in your Morning Window
-    - cron: '45 5 * * *'
+    # 🎯 TARGET: 11:11 AM IST
+    # Cron triggers at 10:55 AM IST (5:25 AM UTC) to beat cloud server delays
+    - cron: '25 5 * * *'
     
-    # 8:20 PM IST (2:50 PM UTC) -> Falls perfectly in your Evening Window
-    - cron: '50 14 * * *'
+    # 🎯 TARGET: 8:20 PM IST (20:20)
+    # Cron triggers at 8:05 PM IST (14:35 UTC) to beat cloud server delays
+    - cron: '35 14 * * *'
     
   workflow_dispatch:
   
