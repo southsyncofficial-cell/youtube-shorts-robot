@@ -2,10 +2,10 @@ name: YouTube Shorts Robot 24/7
 
 on:
   schedule:
-    # 11:15 AM IST (5:45 AM UTC) -> Falls perfectly in your Morning Window
-    - cron: '45 5 * * *'
+    # Trigger at exactly 10:50 AM IST (5:20 AM UTC) for our temporary test
+    - cron: '20 5 * * *'
     
-    # 8:20 PM IST (2:50 PM UTC) -> Falls perfectly in your Evening Window
+    # 8:20 PM IST (2:50 PM UTC) -> Keeping your normal evening window active
     - cron: '50 14 * * *'
     
   workflow_dispatch:
