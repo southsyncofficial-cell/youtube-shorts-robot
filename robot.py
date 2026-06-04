@@ -255,12 +255,12 @@ def run_time_gate():
     
     print(f"⏰ High-Precision Clock: Current Indian Time is {ist_now.strftime('%I:%M %p')} ({ist_now.strftime('%H:%M')})")
     
-    # 🟢 WINDOW 1: Open during the 10 AM hour for our 10:50 AM cron test!
+    # 🟢 WINDOW 1: Morning Wave (Temporarily set to 10 AM so your test works right now!)
     if current_hour == 10 or current_hour == 11:
         print("🔓 Morning gate open! Proceeding to upload.")
         return True
         
-    # 🟢 WINDOW 2: Evening Wave
+    # 🟢 WINDOW 2: Evening Wave (Accepts any time from 08:00 PM to 08:59 PM)
     if current_hour == 20:
         print("🔓 Evening gate open! Proceeding to upload.")
         return True
