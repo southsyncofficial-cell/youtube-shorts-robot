@@ -246,11 +246,9 @@ def run_automation_cycle():
 # 🛑 HIGH-PRECISION TWIN-WAVE TIME GATE
 # ==========================================
 
-import datetime
-import os
-
-    def run_time_gate():
-    # 👤 Manual Button Override: Always let it run if you click it manually
+    # Ensure this function starts completely at the left edge of your screen (no spaces before 'def')
+def run_time_gate():
+    # 👤 Manual Button Override
     if os.getenv("GITHUB_EVENT_NAME", "") == "workflow_dispatch":
         print("👤 Manual trigger detected! Bypassing all checks to upload immediately.")
         return True
@@ -267,7 +265,6 @@ import os
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
             history_content = f.read()
-            # Count how many times today's date shows up in your log file
             todays_upload_count = history_content.count(today_str)
             
     print(f"📊 Daily Report: Total uploads completed so far today ({today_str}): {todays_upload_count}/2")
