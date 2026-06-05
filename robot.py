@@ -246,31 +246,39 @@ def run_automation_cycle():
 # 🛑 HIGH-PRECISION TWIN-WAVE TIME GATE
 # ==========================================
 
-def run_time_gate():
-    # 🛠️ Check if a human manually clicked the "Run workflow" button
-    github_event = os.getenv("GITHUB_EVENT_NAME", "")
-    if github_event == "workflow_dispatch":
-        print("👤 Manual trigger detected! Bypassing the time gate for manual test...")
+import datetime
+import os
+
+    def run_time_gate():
+    # 👤 Manual Button Override: Always let it run if you click it manually
+    if os.getenv("GITHUB_EVENT_NAME", "") == "workflow_dispatch":
+        print("👤 Manual trigger detected! Bypassing all checks to upload immediately.")
         return True
 
-    # 🌍 Otherwise, run normal background clock checks for automation
+    # 🌍 Calculate today's date string in Indian Standard Time (YYYY-MM-DD)
     utc_now = datetime.datetime.now(datetime.timezone.utc)
     ist_now = utc_now + datetime.timedelta(hours=5, minutes=30)
-    current_hour = ist_now.hour
+    today_str = ist_now.strftime("%Y-%m-%d")
     
-    print(f"⏰ High-Precision Clock: Current Indian Time is {ist_now.strftime('%I:%M %p')} ({ist_now.strftime('%H:%M')})")
+    # 📖 Check how many videos we have already uploaded today
+    history_file = "upload_history.txt"
+    todays_upload_count = 0
     
-    # 🟢 WINDOW 1: Morning Auto Drop
-    if current_hour == 11:
-        print("🔓 Morning gate open! Proceeding to upload.")
-        return True
+    if os.path.exists(history_file):
+        with open(history_file, "r") as f:
+            history_content = f.read()
+            # Count how many times today's date shows up in your log file
+            todays_upload_count = history_content.count(today_str)
+            
+    print(f"📊 Daily Report: Total uploads completed so far today ({today_str}): {todays_upload_count}/2")
+    
+    # 🛑 Strictly cap it at 2 reels per day
+    if todays_upload_count >= 2:
+        print("🔒 Daily quota reached (2/2 videos posted). Standing down until tomorrow.")
+        return False
         
-    # 🟢 WINDOW 2: Evening Auto Drop (8:20 PM IST)
-    if current_hour == 20:
-        print("🔓 Evening gate open! Proceeding to upload.")
-        return True
-        
-    return False
+    print(f"🔓 Quota remaining ({todays_upload_count}/2). Opening gate to upload a video!")
+    return True
 
 if __name__ == '__main__':
     # 🛑 Stop execution early if GitHub boots the computer outside your target wave hours
