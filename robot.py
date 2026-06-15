@@ -43,29 +43,32 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 def get_google_services():
     creds = None
     
-    # ☁️ Cloud Environment Check: Pull keys from GitHub Vault if running in the cloud
-    if os.getenv("RUNNING_IN_CLOUD") == "true":
-        print("☁️ Running in GitHub Cloud. Extracting tokens from secure vault...")
-        creds_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
-        token_json = json.loads(os.getenv("GOOGLE_TOKEN"))
-        
-        creds = Credentials.from_authorized_user_info(token_json, SCOPES)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+    # 🎯 FORCE PREFERENCE: Read the physical token file directly in the repository workspace
+    if os.path.exists('token.json'):
+        print("💻 Reading working token.json directly from repository vault...")
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     else:
-        # 💻 Local Environment Check: Use your local files if running on your PC
-        print("💻 Running locally on PC. Reading token.json...")
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-                creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
+        # Emergency cloud backup secret string
+        import json
+        print("☁️ token.json file missing. Falling back to GitHub Secret Environment...")
+        token_env = os.getenv("GOOGLE_TOKEN")
+        if token_env:
+            token_json = json.loads(token_env)
+            creds = Credentials.from_authorized_user_info(token_json, SCOPES)
+
+    # Automatically refresh the token if it expires
+    if creds and creds.expired and creds.refresh_token:
+        try:
+            creds.refresh(Request())
+        except Exception as refresh_error:
+            print(f"⚠️ Token refresh warning: {refresh_error}.")
+
+    # Local fallback initialization flow
+    if not creds or not creds.valid:
+        flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+        creds = flow.run_local_server(port=0)
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
                 
     return build('drive', 'v3', credentials=creds), build('youtube', 'v3', credentials=creds)
 
